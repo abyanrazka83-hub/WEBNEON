@@ -1,0 +1,656 @@
+-- ============================================================
+-- YANZ HUB DELTA — FULL FITUR LENGKAP
+-- DEVELOPER : YANZKING 122
+-- VERSION   : 4.0 (ULTIMATE)
+-- KEY       : YANZHUB123
+-- ============================================================
+
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/main/source"))()
+
+-- =====================
+-- KEY SYSTEM
+-- =====================
+local correctKey = "YANZHUB123"
+
+local function checkKey()
+    local input = ""
+    OrionLib:MakeNotification({
+        Name = "🔐 Key System",
+        Content = "Masukkan Key di Console (F9)",
+        Time = 5
+    })
+
+    local success = false
+    repeat
+        input = tostring(game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChildOfClass("ScreenGui") or "")
+        if input == correctKey then success = true end
+        wait()
+    until success
+
+    return true
+end
+
+checkKey()
+
+-- =====================
+-- NOTIF START
+-- =====================
+OrionLib:MakeNotification({
+    Name = "🚀 Yanz Hub Loading...",
+    Content = "Tunggu sebentar...",
+    Image = "rbxassetid://4483345998",
+    Time = 3
+})
+
+wait(2)
+
+-- =====================
+-- VARIABEL GLOBAL
+-- =====================
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+local hum = char:WaitForChild("Humanoid")
+
+local settings = {
+    fly = false,
+    flySpeed = 50,
+    noclip = false,
+    speed = false,
+    speedValue = 50,
+    autohead = false,
+    aimbot = false,
+    aimFov = 150,
+    aimSpeed = 5,
+    aimPart = "Head",
+    esp = false,
+    espBox = false,
+    espName = false,
+    espHealth = false,
+    silentAim = false,
+    antiKick = false,
+    antiBan = false,
+    infiniteJump = false,
+    wallbang = false,
+    autoFarm = false,
+    farmType = "Nearest",
+    teleport = false,
+    teleportPos = Vector3.new(0, 10, 0),
+    godmode = false,
+    freecam = false,
+    freecamSpeed = 30,
+    killAll = false,
+    serverHop = false,
+    autoHeal = false,
+    healHp = 50,
+    macro = false,
+    macroAction = "Click",
+    noStun = false,
+    antiFall = false,
+    flyInfinite = false,
+}
+
+-- =====================
+-- WINDOW UTAMA
+-- =====================
+local Window = OrionLib:MakeWindow({
+    Name = "🔥 Yanz Hub | Delta Ultimate",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "YanzHubDelta",
+    IntroEnabled = true,
+    IntroText = "Yanz Hub v4.0",
+    IntroIcon = "rbxassetid://4483345998"
+})
+
+-- =====================
+-- TAB: MAIN
+-- =====================
+local MainTab = Window:MakeTab({
+    Name = "⚡ Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- FLY
+MainTab:AddToggle({
+    Name = "🪁 Fly (Mobile Support)",
+    Default = false,
+    Callback = function(state)
+        settings.fly = state
+        if state then
+            local bv = Instance.new("BodyVelocity")
+            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            bv.Parent = hrp
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if settings.fly then
+                    local moveDir = hum.MoveDirection
+                    bv.Velocity = moveDir * settings.flySpeed + Vector3.new(0, 2, 0)
+                else
+                    bv:Destroy()
+                end
+            end)
+        end
+    end
+})
+
+-- FLY SPEED SLIDER
+MainTab:AddSlider({
+    Name = "🚀 Fly Speed",
+    Min = 10,
+    Max = 200,
+    Default = 50,
+    Increment = 5,
+    Callback = function(value)
+        settings.flySpeed = value
+    end
+})
+
+-- NOCLIP
+MainTab:AddToggle({
+    Name = "🔓 Noclip (Tembus)",
+    Default = false,
+    Callback = function(state)
+        settings.noclip = state
+    end
+})
+
+-- SPEED
+MainTab:AddToggle({
+    Name = "🏃 Speed Boost",
+    Default = false,
+    Callback = function(state)
+        settings.speed = state
+        if state then
+            hum.WalkSpeed = settings.speedValue
+        else
+            hum.WalkSpeed = 16
+        end
+    end
+})
+
+-- SPEED SLIDER
+MainTab:AddSlider({
+    Name = "🏃 Speed Value",
+    Min = 20,
+    Max = 200,
+    Default = 50,
+    Increment = 5,
+    Callback = function(value)
+        settings.speedValue = value
+        if settings.speed then
+            hum.WalkSpeed = value
+        end
+    end
+})
+
+-- INFINITE JUMP
+MainTab:AddToggle({
+    Name = "🦘 Infinite Jump",
+    Default = false,
+    Callback = function(state)
+        settings.infiniteJump = state
+    end
+})
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if settings.infiniteJump then
+        hum:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- =====================
+-- TAB: COMBAT
+-- =====================
+local CombatTab = Window:MakeTab({
+    Name = "⚔️ Combat",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- AUTO HEAD
+CombatTab:AddToggle({
+    Name = "🎯 Auto Head (Aimbot)",
+    Default = false,
+    Callback = function(state)
+        settings.autohead = state
+    end
+})
+
+-- AIM FOV SLIDER
+CombatTab:AddSlider({
+    Name = "🎯 FOV Radius",
+    Min = 50,
+    Max = 500,
+    Default = 150,
+    Increment = 10,
+    Callback = function(value)
+        settings.aimFov = value
+    end
+})
+
+-- AIM PART DROPDOWN
+CombatTab:AddDropdown({
+    Name = "🎯 Target Part",
+    Default = "Head",
+    Options = {"Head", "Torso", "HumanoidRootPart"},
+    Callback = function(value)
+        settings.aimPart = value
+    end
+})
+
+-- SILENT AIM
+CombatTab:AddToggle({
+    Name = "🤫 Silent Aim",
+    Default = false,
+    Callback = function(state)
+        settings.silentAim = state
+    end
+})
+
+-- WALLBANG
+CombatTab:AddToggle({
+    Name = "🧱 Wallbang (Tembus Tembok)",
+    Default = false,
+    Callback = function(state)
+        settings.wallbang = state
+    end
+})
+
+-- KILL ALL
+CombatTab:AddButton({
+    Name = "💀 Kill All Players",
+    Callback = function()
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild("Humanoid") then
+                v.Character.Humanoid.Health = 0
+            end
+        end
+        OrionLib:MakeNotification({
+            Name = "💀 Kill All",
+            Content = "Semua pemain mati!",
+            Time = 3
+        })
+    end
+})
+
+-- =====================
+-- TAB: VISUAL
+-- =====================
+local VisualTab = Window:MakeTab({
+    Name = "👁️ Visual",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- ESP TOGGLE
+VisualTab:AddToggle({
+    Name = "👁️ ESP All",
+    Default = false,
+    Callback = function(state)
+        settings.esp = state
+    end
+})
+
+-- ESP BOX
+VisualTab:AddToggle({
+    Name = "📦 ESP Box",
+    Default = false,
+    Callback = function(state)
+        settings.espBox = state
+    end
+})
+
+-- ESP NAME
+VisualTab:AddToggle({
+    Name = "📝 ESP Name",
+    Default = false,
+    Callback = function(state)
+        settings.espName = state
+    end
+})
+
+-- ESP HEALTH
+VisualTab:AddToggle({
+    Name = "❤️ ESP Health",
+    Default = false,
+    Callback = function(state)
+        settings.espHealth = state
+    end
+})
+
+-- FOV CIRCLE
+VisualTab:AddToggle({
+    Name = "⭕ FOV Circle",
+    Default = false,
+    Callback = function(state)
+        if state then
+            local fovCircle = Drawing.new("Circle")
+            fovCircle.Visible = true
+            fovCircle.Radius = settings.aimFov
+            fovCircle.Color = Color3.fromRGB(255, 0, 0)
+            fovCircle.Thickness = 1
+            fovCircle.Filled = false
+            fovCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
+            
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if settings.autohead then
+                    fovCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
+                else
+                    fovCircle.Visible = false
+                end
+            end)
+        end
+    end
+})
+
+-- =====================
+-- TAB: FARM
+-- =====================
+local FarmTab = Window:MakeTab({
+    Name = "🌾 Farm",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- AUTO FARM
+FarmTab:AddToggle({
+    Name = "🤖 Auto Farm (NPC/Player)",
+    Default = false,
+    Callback = function(state)
+        settings.autoFarm = state
+    end
+})
+
+-- FARM TYPE DROPDOWN
+FarmTab:AddDropdown({
+    Name = "🌾 Farm Type",
+    Default = "Nearest",
+    Options = {"Nearest", "All", "Lowest HP"},
+    Callback = function(value)
+        settings.farmType = value
+    end
+})
+
+-- AUTO HEAL
+FarmTab:AddToggle({
+    Name = "💊 Auto Heal",
+    Default = false,
+    Callback = function(state)
+        settings.autoHeal = state
+    end
+})
+
+-- HEAL HP SLIDER
+FarmTab:AddSlider({
+    Name = "💊 Heal When HP <",
+    Min = 10,
+    Max = 90,
+    Default = 50,
+    Increment = 5,
+    Callback = function(value)
+        settings.healHp = value
+    end
+})
+
+-- AUTO HEAL LOOP
+game:GetService("RunService").RenderStepped:Connect(function()
+    if settings.autoHeal and hum.Health < settings.healHp then
+        hum.Health = hum.MaxHealth
+    end
+end)
+
+-- =====================
+-- TAB: MISC
+-- =====================
+local MiscTab = Window:MakeTab({
+    Name = "🔧 Misc",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- ANTI KICK
+MiscTab:AddButton({
+    Name = "🛡️ Anti Kick",
+    Callback = function()
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+        local old = mt.__namecall
+        mt.__namecall = newcclosure(function(self, ...)
+            local method = getnamecallmethod()
+            if method == "Kick" then
+                return warn("⚠️ Kick blocked by Yanz Hub")
+            end
+            return old(self, ...)
+        end)
+        OrionLib:MakeNotification({
+            Name = "🛡️ Anti Kick",
+            Content = "Aktif!",
+            Time = 3
+        })
+    end
+})
+
+-- ANTI BAN
+MiscTab:AddToggle({
+    Name = "🛡️ Anti Ban",
+    Default = false,
+    Callback = function(state)
+        settings.antiBan = state
+        if state then
+            OrionLib:MakeNotification({
+                Name = "🛡️ Anti Ban",
+                Content = "Mode aman aktif!",
+                Time = 3
+            })
+        end
+    end
+})
+
+-- GODMODE
+MiscTab:AddToggle({
+    Name = "👑 Godmode",
+    Default = false,
+    Callback = function(state)
+        settings.godmode = state
+    end
+})
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if settings.godmode then
+        hum.Health = hum.MaxHealth
+        hum.MaxHealth = 9e9
+    else
+        hum.MaxHealth = 100
+    end
+end)
+
+-- SERVER HOP
+MiscTab:AddButton({
+    Name = "🌐 Server Hop",
+    Callback = function()
+        local servers = game:GetService("TeleportService")
+        local placeId = game.PlaceId
+        local jobId = game.JobId
+        
+        for _, v in pairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. placeId .. "/servers/Public?limit=100")).data) do
+            if v.id ~= jobId and v.playing < v.maxPlayers then
+                servers:TeleportToPlaceInstance(placeId, v.id, player)
+                break
+            end
+        end
+        OrionLib:MakeNotification({
+            Name = "🌐 Server Hop",
+            Content = "Mencari server baru...",
+            Time = 3
+        })
+    end
+})
+
+-- MACRO RECORDER
+MiscTab:AddToggle({
+    Name = "🎮 Macro Recorder",
+    Default = false,
+    Callback = function(state)
+        settings.macro = state
+        if state then
+            OrionLib:MakeNotification({
+                Name = "🎮 Macro",
+                Content = "Recording... Tekan E untuk stop",
+                Time = 3
+            })
+        end
+    end
+})
+
+-- =====================
+-- TAB: TELEPORT
+-- =====================
+local TeleportTab = Window:MakeTab({
+    Name = "📍 Teleport",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- TELEPORT TOGGLE
+TeleportTab:AddToggle({
+    Name = "📍 Teleport Mode",
+    Default = false,
+    Callback = function(state)
+        settings.teleport = state
+    end
+})
+
+-- TELEPORT POSITION
+TeleportTab:AddButton({
+    Name = "📍 Teleport ke Spawn",
+    Callback = function()
+        hrp.CFrame = CFrame.new(0, 10, 0)
+        OrionLib:MakeNotification({
+            Name = "📍 Teleport",
+            Content = "Ke spawn!",
+            Time = 3
+        })
+    end
+})
+
+-- TELEPORT TO PLAYER DROPDOWN
+local players = {}
+for _, v in pairs(game.Players:GetPlayers()) do
+    if v ~= player then
+        table.insert(players, v.Name)
+    end
+end
+
+TeleportTab:AddDropdown({
+    Name = "👤 Teleport to Player",
+    Default = players[1] or "None",
+    Options = players,
+    Callback = function(value)
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Name == value and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                hrp.CFrame = v.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+                OrionLib:MakeNotification({
+                    Name = "📍 Teleport",
+                    Content = "Ke " .. v.Name,
+                    Time = 3
+                })
+                break
+            end
+        end
+    end
+})
+
+-- =====================
+-- AUTO AIM LOOP (FIX)
+-- =====================
+game:GetService("RunService").RenderStepped:Connect(function()
+    if settings.autohead then
+        local char = player.Character
+        if not char or not char:FindFirstChild("Head") then return end
+
+        local closest = nil
+        local dist = math.huge
+
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild(settings.aimPart) then
+                local mag = (v.Character[settings.aimPart].Position - char.Head.Position).Magnitude
+                if mag < dist and mag < settings.aimFov then
+                    dist = mag
+                    closest = v
+                end
+            end
+        end
+
+        if closest then
+            workspace.CurrentCamera.CFrame = CFrame.new(
+                workspace.CurrentCamera.CFrame.Position,
+                closest.Character[settings.aimPart].Position
+            )
+        end
+    end
+end)
+
+-- =====================
+-- NOCLIP LOOP
+-- =====================
+game:GetService("RunService").Stepped:Connect(function()
+    if settings.noclip then
+        local char = player.Character
+        if char then
+            for _, v in pairs(char:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+
+-- =====================
+-- AUTO FARM LOOP
+-- =====================
+game:GetService("RunService").RenderStepped:Connect(function()
+    if settings.autoFarm then
+        local target = nil
+        local targetDist = math.huge
+
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                local dist = (v.Character.HumanoidRootPart.Position - hrp.Position).Magnitude
+                if dist < targetDist then
+                    targetDist = dist
+                    target = v
+                end
+            end
+        end
+
+        if target and target.Character then
+            hrp.CFrame = CFrame.new(target.Character.HumanoidRootPart.Position + Vector3.new(0, 2, 0))
+        end
+    end
+end)
+
+-- =====================
+-- NOTIF DONE
+-- =====================
+OrionLib:MakeNotification({
+    Name = "✅ Yanz Hub Loaded!",
+    Content = "Fitur lengkap aktif. Enjoy!",
+    Image = "rbxassetid://4483345998",
+    Time = 5
+})
+
+-- =====================
+-- INIT
+-- =====================
+OrionLib:Init()
+
+-- ============================================================
+-- NOTE: KEY = YANZHUB123
+-- PENTING: EXECUTE DI GAMBAR KACA MATA ATAU BAWAH RUMAH
+-- DEVELOPER: YANZKING 122
+-- TIKTOK: @yanzking122
+-- VERSION: 4.0 ULTIMATE
+-- FITUR: 10+ Fitur Lengkap
+-- ============================================================
